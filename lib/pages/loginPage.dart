@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
             );
             Scaffold.of(context).showSnackBar(snackBar);
           }
-          if (state is AuthLoadingState|| state is ForgetLoadingState) {
+          if (state is AuthLoadingState || state is ForgetLoadingState) {
             widget = LoadingBouncingGrid.square(
               borderColor: Colors.deepOrangeAccent,
               backgroundColor: Colors.deepOrangeAccent,
@@ -348,31 +348,34 @@ class _LoginPageState extends State<LoginPage> {
                   (Route<dynamic> route) => false);
             }
           }
-          if(state is ForgetLoadedState){
+          if (state is ForgetLoadedState) {
             widget = SizedBox(
               width: 0,
               height: 0,
             );
             showDialog(
-                context: context,builder: (_) => FlareGiffyDialog(
-              onlyOkButton: true,
-              flarePath: 'assets/dialog.flr',
-              flareAnimation: 'jump',
-              title: Text('Şifre Sıfırlama Maili Gönderildi',
-                style: TextStyle(
-                    fontSize: 22.0, fontWeight: FontWeight.w600),
-              ),
-              description: Text("Şifre sıfırlama linki mail hesabınıza göndirilmiştir.Lütfen postanızı kontrol ediniz",
-                textAlign: TextAlign.center,
-                style: TextStyle(),
-              ),
-              entryAnimation: EntryAnimation.DEFAULT,
-              onOkButtonPressed: () {
-                Navigator.of(context).pop();
-              },
-            ) );
+                context: context,
+                builder: (_) => FlareGiffyDialog(
+                      onlyOkButton: true,
+                      flarePath: 'assets/dialog.flr',
+                      flareAnimation: 'jump',
+                      title: Text(
+                        'Şifre Sıfırlama Maili Gönderildi',
+                        style: TextStyle(
+                            fontSize: 22.0, fontWeight: FontWeight.w600),
+                      ),
+                      description: Text(
+                        "Şifre sıfırlama linki mail hesabınıza göndirilmiştir.Lütfen postanızı kontrol ediniz",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(),
+                      ),
+                      entryAnimation: EntryAnimation.TOP_RIGHT,
+                      onOkButtonPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ));
           }
-          if(state is ForgetErrorState){
+          if (state is ForgetErrorState) {
             widget = SizedBox(
               width: 0,
               height: 0,
