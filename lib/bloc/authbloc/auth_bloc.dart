@@ -62,10 +62,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     }
     else if(event is ForgetPass){
-      yield ForgetState();
+      yield ForgetLoadingState();
       try{
-
         await _authRepository.forgetPassword(event.email);
+        yield ForgetLoadedState();
+
 
       }catch(_){
         yield ForgetErrorState(_.toString());

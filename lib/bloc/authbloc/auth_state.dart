@@ -32,12 +32,16 @@ class AuthErrorState extends AuthState{
   List<Object> get props => null;
 }
 
-class ForgetState extends AuthState{
+class ForgetLoadingState extends AuthState{
   @override
   // TODO: implement props
   List<Object> get props => null;
+}
 
-
+class ForgetLoadedState extends AuthState{
+  @override
+  // TODO: implement props
+  List<Object> get props => null;
 }
 
 

@@ -25,6 +25,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController;
   TextEditingController _passwordController;
+  TextEditingController _secondEmailController;
+  String butonText = "Giriş Yap";
+  String textfieldText = "Şifre";
+  String sifreniUnuttun = "Şifrenizi mi unuttunuz ?";
+  bool isReset = true;
+  double oppacity = 1.0;
 
   @override
   void initState() {
@@ -32,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _emailController = TextEditingController(text: "");
     _passwordController = TextEditingController(text: "");
+    _secondEmailController = TextEditingController(text: "");
   }
 
   Widget _backButton() {
@@ -55,38 +62,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-                color: Colors.deepPurpleAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-              controller: isPassword ? _passwordController : _emailController,
-              obscureText: isPassword,
-              cursorColor: Colors.deepOrange,
-              keyboardType:
-                  isPassword ? TextInputType.text : TextInputType.emailAddress,
-              decoration: InputDecoration(
-                  suffixIcon: isPassword
-                      ? FaIcon(FontAwesomeIcons.key)
-                      : FaIcon(FontAwesomeIcons.at),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
-        ],
+  Widget _entryField(String title,
+      {bool isPassword = false, double opacity = 1.0}) {
+    return Opacity(
+      opacity: opacity,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(
+                  color: Colors.deepPurpleAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextField(
+                controller: isPassword ? _passwordController : _emailController,
+                obscureText: isPassword,
+                cursorColor: Colors.deepOrange,
+                keyboardType: isPassword
+                    ? TextInputType.text
+                    : TextInputType.emailAddress,
+                decoration: InputDecoration(
+                    suffixIcon: isPassword
+                        ? FaIcon(FontAwesomeIcons.key)
+                        : FaIcon(FontAwesomeIcons.at),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    fillColor: Color(0xfff3f3f4),
+                    filled: true))
+          ],
+        ),
       ),
     );
   }
@@ -111,15 +123,18 @@ class _LoginPageState extends State<LoginPage> {
                 end: Alignment.centerRight,
                 colors: [Color(0xfffbb448), Color(0xfff7892b)])),
         child: Text(
-          'Giriş Yap',
+          butonText,
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
       onTap: () async {
-        authBloc.add(EmailLogin(
-            email: _emailController.text, password: _passwordController.text));
-
-        //TODO koyulan verileri gönder
+        if (isReset) {
+          authBloc.add(EmailLogin(
+              email: _emailController.text,
+              password: _passwordController.text));
+        } else {
+          authBloc.add(ForgetPass(email: _emailController.text));
+        }
       },
     );
   }
@@ -263,7 +278,6 @@ class _LoginPageState extends State<LoginPage> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-
           text: 'MOB',
           style: GoogleFonts.pressStart2p(
             textStyle: Theme.of(context).textTheme.display1,
@@ -283,8 +297,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email"),
-        _entryField("Şifre", isPassword: true),
+        _entryField("Email", opacity: 1.0),
+        _entryField(textfieldText, isPassword: true, opacity: oppacity),
       ],
     );
   }
@@ -311,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
             );
             Scaffold.of(context).showSnackBar(snackBar);
           }
-          if (state is AuthLoadingState) {
+          if (state is AuthLoadingState|| state is ForgetLoadingState) {
             widget = LoadingBouncingGrid.square(
               borderColor: Colors.deepOrangeAccent,
               backgroundColor: Colors.deepOrangeAccent,
@@ -333,6 +347,41 @@ class _LoginPageState extends State<LoginPage> {
                           ))),
                   (Route<dynamic> route) => false);
             }
+          }
+          if(state is ForgetLoadedState){
+            widget = SizedBox(
+              width: 0,
+              height: 0,
+            );
+            showDialog(
+                context: context,builder: (_) => FlareGiffyDialog(
+              onlyOkButton: true,
+              flarePath: 'assets/dialog.flr',
+              flareAnimation: 'jump',
+              title: Text('Şifre Sıfırlama Maili Gönderildi',
+                style: TextStyle(
+                    fontSize: 22.0, fontWeight: FontWeight.w600),
+              ),
+              description: Text("Şifre sıfırlama linki mail hesabınıza göndirilmiştir.Lütfen postanızı kontrol ediniz",
+                textAlign: TextAlign.center,
+                style: TextStyle(),
+              ),
+              entryAnimation: EntryAnimation.DEFAULT,
+              onOkButtonPressed: () {
+                Navigator.of(context).pop();
+              },
+            ) );
+          }
+          if(state is ForgetErrorState){
+            widget = SizedBox(
+              width: 0,
+              height: 0,
+            );
+            final snackBar = SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: Colors.red,
+            );
+            Scaffold.of(context).showSnackBar(snackBar);
           }
         },
         child: BlocBuilder(
@@ -367,26 +416,25 @@ class _LoginPageState extends State<LoginPage> {
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: (){
-                              showDialog(
-                                  context: context,builder: (_) => AlertDialog(
-                                contentPadding: EdgeInsets.all(0),
-                                content: Container(
-                                  height: MediaQuery.of(context).size.height/1.5,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 200,
-                                        child: FlareActor('assets/dialog.flr',animation: 'jump',fit: BoxFit.fill,),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                              );
+                            onTap: () {
+                              setState(() {
+                                if (isReset) {
+                                  textfieldText = "Tekrar Emailiniz Giriniz";
+                                  butonText = "Şifreyi Sıfırla";
+                                  sifreniUnuttun = "Vazgeç";
+                                  oppacity = 0.0;
+                                  isReset = false;
+                                } else {
+                                  textfieldText = "Şifre";
+                                  butonText = "Giriş Yap";
+                                  sifreniUnuttun = "Şifrenizi mi unuttunuz?";
+                                  oppacity = 1.0;
+                                  isReset = true;
+                                }
+                              });
                             },
                             child: Container(
-                              child: Text('Şifreni mi Unuttun ?',
+                              child: Text(sifreniUnuttun,
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.deepPurpleAccent,
