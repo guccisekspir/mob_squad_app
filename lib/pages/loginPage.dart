@@ -1,6 +1,8 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:mob_squad_app/bloc/authbloc/auth_bloc.dart';
@@ -364,11 +366,33 @@ class _LoginPageState extends State<LoginPage> {
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.centerRight,
-                          child: Text('Şifreni mi Unuttun ?',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.deepPurpleAccent,
-                                  fontWeight: FontWeight.w500)),
+                          child: GestureDetector(
+                            onTap: (){
+                              showDialog(
+                                  context: context,builder: (_) => AlertDialog(
+                                contentPadding: EdgeInsets.all(0),
+                                content: Container(
+                                  height: MediaQuery.of(context).size.height/1.5,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 200,
+                                        child: FlareActor('assets/dialog.flr',animation: 'jump',fit: BoxFit.fill,),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                              );
+                            },
+                            child: Container(
+                              child: Text('Şifreni mi Unuttun ?',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.deepPurpleAccent,
+                                      fontWeight: FontWeight.w500)),
+                            ),
+                          ),
                         ),
                         _divider(),
                         _facebookButton(_authBloc),
