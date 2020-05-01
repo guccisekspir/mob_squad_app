@@ -261,17 +261,18 @@ class _LoginPageState extends State<LoginPage> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'Mücbir ',
-          style: GoogleFonts.portLligatSans(
+
+          text: 'MOB',
+          style: GoogleFonts.pressStart2p(
             textStyle: Theme.of(context).textTheme.display1,
-            fontSize: 30,
+            fontSize: 25,
             fontWeight: FontWeight.w700,
             color: Color(0xffe46b10),
           ),
           children: [
             TextSpan(
-              text: 'Sebepler',
-              style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 30),
+              text: 'SQUAD',
+              style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 25),
             ),
           ]),
     );
